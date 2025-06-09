@@ -39,9 +39,6 @@
     </div>
 
     <script>
-      /**
-       * DỊCH VỤ QUẢN LÝ GIỎ HÀNG (DÙNG CHUNG)
-       */
       const CartService = {
         getCart: () => {
           const cartData = sessionStorage.getItem('shoppingCart');
@@ -65,10 +62,6 @@
           return Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
         },
       };
-
-      /**
-       * SCRIPT RIÊNG CHO TRANG MENU.HTML
-       */
       document.addEventListener("DOMContentLoaded", () => {
         // --- Dữ liệu và Cấu hình ---
         const menuData = [
@@ -80,12 +73,8 @@
           { id: 106, name: "Cafe Sữa", description: "Cafe pha phin đậm đà.", price: 29000, category: "drink", image: "☕" },
           { id: 107, name: "Trà Đào", description: "Trà đào thơm mát, miếng đào giòn.", price: 35000, category: "drink", image: "🍑" },
         ];
-        
-        // State lưu số lượng tạm thời trên trang
         const state = { quantities: {} };
         menuData.forEach(item => { state.quantities[item.id] = 0; });
-
-        // --- DOM Elements ---
         const elements = {
           menuGrid: document.getElementById("menuGrid"),
           cartCount: document.getElementById("cartCount"),
@@ -93,8 +82,6 @@
           pageTitle: document.querySelector(".page-title"),
           navLinks: document.querySelectorAll(".nav-link"),
         };
-
-        // --- Các hàm tiện ích ---
         const utils = {
           formatPrice: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
           showNotification: (message) => {
@@ -105,8 +92,6 @@
             setTimeout(() => notification.remove(), 2000);
           },
         };
-
-        // --- UI Functions ---
         const ui = {
           updateCartDisplay: () => {
             elements.cartCount.textContent = CartService.getTotalItems();
@@ -137,8 +122,6 @@
             if (qtyDisplay) qtyDisplay.textContent = newQty;
           }
         };
-
-        // --- App Logic ---
         const app = {
           updateQuantity: (itemId, change) => {
             const currentQty = state.quantities[itemId] || 0;
@@ -174,11 +157,7 @@
             window.location.href = 'checkout.html';
           }
         };
-
-        // Đưa các hàm cần thiết ra global scope để HTML có thể gọi
         window.app = app;
-
-        // --- Khởi tạo ---
         ui.renderMenu();
         ui.updateCartDisplay();
       });
