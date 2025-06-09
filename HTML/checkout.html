@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Thanh toán - Bill Gates Store</title>
+      <link rel="stylesheet" href="style-checkout.css" />
+  </head>
+  <body>
+      <div class="header">
+          <h1>🛍️ Thanh toán </h1>
+          <p>Kiểm tra lại giỏ hàng và hoàn tất thông tin đặt hàng</p>
+      </div>
+      <div class="main-container">
+          <div class="left-panel">
+              <div class="glass-card">
+                  <a href="menu.html" class="back-to-menu-link">⬅️ Quay lại Menu</a>
+                  <div class="card-title">
+                      <div class="card-icon">🛒</div>
+                      Giỏ hàng của bạn
+                  </div>
+                  <div class="cart-section" id="cart-items">
+                      <div class="cart-empty">Chưa có sản phẩm nào</div>
+                  </div>
+                  <div class="summary-box">
+                      <div class="summary-row">
+                          <span>Tạm tính:</span>
+                          <span id="subtotal">0đ</span>
+                      </div>
+                      <div class="summary-row">
+                          <span>Phí vận chuyển:</span>
+                          <span id="shipping">15.000đ</span>
+                      </div>
+                      <div class="summary-row summary-total">
+                          <span>Tổng cộng:</span>
+                          <span id="total">15.000đ</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="form-container">
+              <div class="form-title">💳 Thông tin đặt hàng</div>
+              <form id="order-form">
+                  <div class="form-group" style="margin-bottom: 1rem;">
+                      <label class="form-label">👤 Họ và tên</label>
+                      <input type="text" class="form-input" name="fullname" placeholder="Nhập họ tên đầy đủ" required>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 1rem;">
+                      <label class="form-label">📱 Số điện thoại</label>
+                      <input type="tel" class="form-input" name="phone" placeholder="0xxx xxx xxx" required>
+                  </div>
+                  <div class="form-group">
+                      <label class="form-label">💰 Phương thức thanh toán</label>
+                      <div class="payment-options">
+                          <div class="payment-option">
+                              <input type="radio" id="cod" name="payment" value="cod" checked>
+                              <label for="cod" class="payment-label">💵 Thanh toán khi nhận hàng (COD)</label>
+                          </div>
+                          <div class="payment-option">
+                              <input type="radio" id="card" name="payment" value="card">
+                              <label for="card" class="payment-label">💳 Thẻ tín dụng/ghi nợ</label>
+                          </div>
+                      </div>
+                  </div>
+                  <button type="submit" class="submit-btn">🚀 Xác nhận đặt hàng</button>
+              </form>
+          </div>
+      </div>
+
+      <script>
+        /**
+         * DỊCH VỤ QUẢN LÝ GIỎ HÀNG (DÙNG CHUNG)
+         */
+        const CartService = {
+          getCart: () => {
+            const cartData = sessionStorage.getItem('shoppingCart');
+            return cartData ? JSON.parse(cartData) : {};
+          },
+          clearCart: () => {
+            sessionStorage.removeItem('shoppingCart');
+          },
+          getTotalPrice: () => {
+            const cart = CartService.getCart();
+            return Object.values(cart).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          },
+          getTotalItems: () => {
+            const cart = CartService.getCart();
+            return Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+          }
+        };
+
+        /**
+         * SCRIPT RIÊNG CHO TRANG CHECKOUT.HTML
+         */
+        document.addEventListener("DOMContentLoaded", () => {
+          // --- Các hàm tiện ích ---
+          const utils = {
+            formatPrice: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
+          };
+
+          // --- UI Functions ---
+          const ui = {
+            renderCartItems: (cart) => {
+              const cartContainer = document.getElementById('cart-items');
+              if (Object.keys(cart).length === 0) {
+                cartContainer.innerHTML = '<div class="cart-empty">Chưa có sản phẩm nào</div>';
+                return;
+              }
+              cartContainer.innerHTML = Object.values(cart).map(item => `
+                <div class="product-item">
+                  <div class="product-info">
+                    <h4>${item.name}</h4>
+                    <span>Số lượng: ${item.quantity}</span>
+                  </div>
+                  <div class="product-price">
+                    ${utils.formatPrice(item.price * item.quantity)}
+                  </div>
+                </div>
+              `).join('');
+            },
+            updateSummary: (cart) => {
+              const subtotal = CartService.getTotalPrice();
+              const shippingFee = subtotal > 0 ? 15000 : 0;
+              const total = subtotal + shippingFee;
+
+              document.getElementById('subtotal').textContent = utils.formatPrice(subtotal);
+              document.getElementById('shipping').textContent = utils.formatPrice(shippingFee);
+              document.getElementById('total').textContent = utils.formatPrice(total);
+            }
+          };
+
+          // --- Khởi tạo và Gán sự kiện ---
+          const initializePage = () => {
+            const cart = CartService.getCart();
+            ui.renderCartItems(cart);
+            ui.updateSummary(cart);
+          };
+
+          document.getElementById('order-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (CartService.getTotalItems() === 0) {
+              alert("Giỏ hàng của bạn đang trống!");
+              return;
+            }
+            alert("Đặt hàng thành công! Cảm ơn bạn đã mua hàng.");
+            CartService.clearCart();
+            window.location.href = 'order-type.html'; // Quay về trang bắt đầu
+          });
+
+          initializePage();
+        });
+      </script>
+  </body>
+</html>

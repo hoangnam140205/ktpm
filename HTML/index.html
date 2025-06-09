@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bill Gates Store</title>
+    <link rel="stylesheet" href="style-index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header glass glass-light">
+        <a href="order-type.html" class="logo">Bill Gates</a>
+        <nav class="nav">
+          <a href="menu.html" class="nav-item">Menu</a>
+          <a href="description.html" class="nav-item">Giới thiệu</a>
+          <button class="cart-btn" id="cartBtn">
+            <a href="checkout.html" class="cart-btn-link">
+                <span>🛒 Giỏ hàng</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+          </button>
+        </nav>
+      </header>
+      <main>
+        <h1 class="main-title">COMBO BEST SELLER</h1>
+        <div class="grid products-grid" id="productsGrid"></div>
+      </main>
+    </div>
+    <script>
+      /**
+       * DỊCH VỤ QUẢN LÝ GIỎ HÀNG (DÙNG CHUNG)
+       */
+      const CartService = {
+        getCart: () => {
+          const cartData = sessionStorage.getItem('shoppingCart');
+          return cartData ? JSON.parse(cartData) : {};
+        },
+        saveCart: (cart) => {
+          sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+        },
+        addItem: (item, quantity) => {
+          const cart = CartService.getCart();
+          const currentQuantity = cart[item.id] ? cart[item.id].quantity : 0;
+          cart[item.id] = { ...item, quantity: currentQuantity + quantity };
+          CartService.saveCart(cart);
+        },
+        getTotalItems: () => {
+          const cart = CartService.getCart();
+          return Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+        },
+      };
+
+      /**
+       * SCRIPT RIÊNG CHO TRANG INDEX.HTML
+       */
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- Cấu hình và DOM Elements ---
+        const CONFIG = {
+          products: [
+            { id: 1, name: "COMBO 1", price: 150000 },
+            { id: 2, name: "COMBO 2", price: 100000 },
+            { id: 3, name: "COMBO 3", price: 250000 },
+          ],
+        };
+
+        const elements = {
+          cartCount: document.getElementById("cartCount"),
+          productsGrid: document.getElementById("productsGrid"),
+        };
+
+        // --- Các hàm tiện ích ---
+        const utils = {
+            formatPrice: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
+            showNotification: (message) => {
+                const notification = document.createElement("div");
+                notification.className = "notification";
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 2000);
+            },
+        };
+
+        // --- Logic chính ---
+        const cart = {
+          add: (product) => {
+            CartService.addItem(product, 1); // Thêm 1 sản phẩm mỗi lần nhấn
+            ui.updateCartCount();
+            utils.showNotification(`Đã thêm ${product.name} vào giỏ hàng!`);
+          },
+        };
+
+        const ui = {
+          updateCartCount: () => {
+            if (elements.cartCount) {
+              elements.cartCount.textContent = CartService.getTotalItems();
+            }
+          },
+          renderProducts: () => {
+            if (!elements.productsGrid) return;
+            elements.productsGrid.innerHTML = CONFIG.products
+              .map(
+                (product) => `
+                  <div class="product-card glass">
+                      <div class="product-image">Image for ${product.name}</div>
+                      <h3 class="product-title">${product.name}</h3>
+                      <div class="product-price">${utils.formatPrice(product.price)}</div>
+                      <button class="btn btn-primary" data-product='${JSON.stringify(product)}'>
+                          Thêm vào giỏ
+                      </button>
+                  </div>
+                `
+              )
+              .join("");
+          },
+        };
+
+        // --- Gán sự kiện ---
+        elements.productsGrid.addEventListener('click', (event) => {
+            if (event.target.classList.contains('btn-primary')) {
+                const productData = JSON.parse(event.target.dataset.product);
+                cart.add(productData);
+            }
+        });
+
+        // --- Khởi tạo ---
+        ui.renderProducts();
+        ui.updateCartCount();
+      });
+    </script>
+  </body>
+</html>
