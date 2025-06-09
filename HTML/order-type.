@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bill Gates - Food Choice</title>
+    <link rel="stylesheet" href="style-order-type.css" />
+  </head>
+  <body>
+    <div class="background">
+      <div class="particles" id="particles"></div>
+    </div>
+    <div class="container">
+      <div class="header">
+        <h1 class="logo">Bill Gates</h1>
+        <h2 class="question">Bạn chọn hình thức nào sau đây?</h2>
+        <p class="subtitle">Chọn hình thức bạn muốn dùngdùng</p>
+      </div>
+
+      <div class="cards-container">
+        <div class="card" data-option="eat-in">
+          <span class="card-icon">🍽️</span>
+          <h3 class="card-title">Tại chỗ</h3>
+          <p class="card-description">
+            Thưởng thức bữa ăn tại nhà hàng của chúng tôi với không gian thoáng
+            đãng và phục vụ chuyên nghiệp
+          </p>
+        </div>
+
+        <div class="card" data-option="take-out">
+          <span class="card-icon take-out-icon">🛍️</span>
+          <h3 class="card-title">Mang đi</h3>
+          <p class="card-description">
+            Đặt món và mang về nhà để thưởng thức cùng gia đình và bạn bè
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="tableModal">
+      <div class="modal-content">
+        <h3 class="modal-title">🍽️ Chọn bàn</h3>
+        <p class="modal-subtitle">Vui lòng nhập số bàn bạn muốn ngồi</p>
+        <input
+          type="number"
+          class="table-input"
+          id="tableNumber"
+          placeholder="Số bàn (VD: 5)"
+          min="1"
+          max="50"
+        />
+        <div class="modal-buttons">
+          <button class="btn btn-primary" id="confirmBtn">Xác nhận</button>
+          <button class="btn btn-secondary" id="cancelBtn">Hủy</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("tableModal");
+        const tableInput = document.getElementById("tableNumber");
+        const particlesContainer = document.getElementById("particles");
+        const confirmButton = document.getElementById("confirmBtn");
+        const cancelButton = document.getElementById("cancelBtn");
+        const createParticles = () => {
+          if (!particlesContainer) return;
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < 30; i++) {
+            const particle = document.createElement("div");
+            particle.className = "particle";
+            particle.style.cssText = `
+              left: ${Math.random() * 100}%;
+              animation-delay: ${Math.random() * 20}s;
+              animation-duration: ${Math.random() * 15 + 10}s;
+            `;
+            fragment.appendChild(particle);
+          }
+          particlesContainer.appendChild(fragment);
+        };
+        const showModal = () => {
+          modal.classList.add("show");
+          setTimeout(() => tableInput.focus(), 300);
+        };
+
+        const closeModal = () => {
+          modal.classList.remove("show");
+          tableInput.value = "";
+        };
+
+        const confirmTable = () => {
+          const tableNumber = tableInput.value;
+          if (tableNumber && tableNumber > 0) {
+            sessionStorage.setItem("tableNumber", tableNumber);
+            sessionStorage.setItem("diningType", "eat-in");
+            window.location.href = "index.html";
+          } else {
+            alert("Vui lòng nhập số bàn hợp lệ!");
+            tableInput.focus();
+          }
+        };
+        document.querySelectorAll(".card").forEach((card) => {
+          card.addEventListener("click", function () {
+            const option = this.dataset.option;
+            if (option === "eat-in") {
+              showModal();
+            } else if (option === "take-out") {
+              sessionStorage.setItem("diningType", "take-out");
+              window.location.href = "index.html";
+            }
+          });
+        });
+        confirmButton.addEventListener('click', confirmTable);
+        cancelButton.addEventListener('click', closeModal);
+        modal.addEventListener("click", (e) => e.target === modal && closeModal());
+        document.addEventListener("keydown", (e) => e.key === "Escape" && closeModal());
+        tableInput.addEventListener("keypress", (e) => e.key === "Enter" && confirmTable());
+        createParticles();
+      });
+    </script>
+  </body>
+</html>
