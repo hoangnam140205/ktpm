@@ -68,9 +68,6 @@
       </div>
 
       <script>
-        /**
-         * DỊCH VỤ QUẢN LÝ GIỎ HÀNG (DÙNG CHUNG)
-         */
         const CartService = {
           getCart: () => {
             const cartData = sessionStorage.getItem('shoppingCart');
@@ -88,10 +85,6 @@
             return Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
           }
         };
-
-        /**
-         * SCRIPT RIÊNG CHO TRANG CHECKOUT.HTML
-         */
         document.addEventListener("DOMContentLoaded", () => {
           // --- Các hàm tiện ích ---
           const utils = {
@@ -128,8 +121,6 @@
               document.getElementById('total').textContent = utils.formatPrice(total);
             }
           };
-
-          // --- Khởi tạo và Gán sự kiện ---
           const initializePage = () => {
             const cart = CartService.getCart();
             ui.renderCartItems(cart);
