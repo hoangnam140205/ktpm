@@ -27,9 +27,6 @@
       </main>
     </div>
     <script>
-      /**
-       * DỊCH VỤ QUẢN LÝ GIỎ HÀNG (DÙNG CHUNG)
-       */
       const CartService = {
         getCart: () => {
           const cartData = sessionStorage.getItem('shoppingCart');
@@ -49,10 +46,6 @@
           return Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
         },
       };
-
-      /**
-       * SCRIPT RIÊNG CHO TRANG INDEX.HTML
-       */
       document.addEventListener("DOMContentLoaded", () => {
         // --- Cấu hình và DOM Elements ---
         const CONFIG = {
@@ -67,8 +60,6 @@
           cartCount: document.getElementById("cartCount"),
           productsGrid: document.getElementById("productsGrid"),
         };
-
-        // --- Các hàm tiện ích ---
         const utils = {
             formatPrice: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
             showNotification: (message) => {
@@ -79,8 +70,6 @@
                 setTimeout(() => notification.remove(), 2000);
             },
         };
-
-        // --- Logic chính ---
         const cart = {
           add: (product) => {
             CartService.addItem(product, 1); // Thêm 1 sản phẩm mỗi lần nhấn
@@ -113,16 +102,12 @@
               .join("");
           },
         };
-
-        // --- Gán sự kiện ---
         elements.productsGrid.addEventListener('click', (event) => {
             if (event.target.classList.contains('btn-primary')) {
                 const productData = JSON.parse(event.target.dataset.product);
                 cart.add(productData);
             }
         });
-
-        // --- Khởi tạo ---
         ui.renderProducts();
         ui.updateCartCount();
       });
