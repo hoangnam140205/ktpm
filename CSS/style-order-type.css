@@ -1,0 +1,363 @@
+/* =============================================== */
+/* BIẾN SỐ VÀ CÀI ĐẶT CHUNG (VARIABLES & GLOBAL)  */
+/* =============================================== */
+:root {
+  --primary-gradient: linear-gradient(
+    135deg,
+    #7c3aed 0%,
+    #c084fc 50%,
+    #f472b6 100%
+  );
+  --secondary-gradient: linear-gradient(135deg, #ffd700, #ffed4e);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --shadow-light: 0 2px 20px rgba(0, 0, 0, 0.3);
+  --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  background: var(--primary-gradient);
+}
+
+/* HIỆU ỨNG NỀN (BACKGROUND EFFECTS)             */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--primary-gradient);
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  animation: particleFloat 20s infinite linear;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* BỐ CỤC CHÍNH VÀ TIÊU ĐỀ (LAYOUT & HEADER)      */
+.container {
+  position: relative;
+  z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+  animation: fadeInDown 1s ease-out;
+}
+
+.logo {
+  font-size: 4rem;
+  font-weight: 800;
+  background: var(--secondary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+  margin-bottom: 1rem;
+  letter-spacing: -2px;
+}
+
+.question {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-shadow: var(--shadow-light);
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+/* THẺ LỰA CHỌN (CHOICE CARDS)                    */
+.cards-container {
+  display: flex;
+  gap: 3rem;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  width: 320px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-heavy);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 -100% 0 -100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  display: block;
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.3));
+  animation: bounce 2s infinite;
+}
+
+.take-out-icon {
+  animation-delay: 0.5s;
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-shadow: var(--shadow-light);
+}
+
+.card-description {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* CỬA SỔ MODAL (MODAL STYLES)                    */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(30px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  transform: scale(0.8);
+  transition: var(--transition);
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.modal-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.table-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  transition: var(--transition);
+}
+
+.table-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.table-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #333;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* HIỆU ỨNG (ANIMATIONS)                           */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* RESPONSIVE DESIGN (CHO MÀN HÌNH NHỎ)           */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 2.5rem;
+  }
+  .question {
+    font-size: 1.8rem;
+  }
+  .cards-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .card {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .container {
+    padding: 1rem;
+  }
+  .modal-buttons {
+    flex-direction: column;
+  }
+}
